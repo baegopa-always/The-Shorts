@@ -12,11 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class User implements UserDetails {
+public class Member implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id", updatable = false)
@@ -31,19 +30,15 @@ public class User implements UserDetails {
     @Column(name = "role_id", nullable = false)
     private int role_id;
 
-    @Column(name = "social_id", nullable = false)
-    private int social_id;
-
-    @Column(name = "social_provider", nullable = false)
-    private String social_provider;
+    @Column(name = "password")
+    private String password;
 
     @Builder
-    public User(String email, String username, int role_id, String social_provider, int social_id, String auth) {
+    public Member(String email, String username, int role_id, String auth, String password) {
         this.email = email;
         this.username = username;
         this.role_id = role_id;
-        this.social_provider = social_provider;
-        this.social_id = social_id;
+        this.password = password;
     }
 
     @Override
@@ -58,7 +53,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
     @Override
     public boolean isAccountNonExpired() {
@@ -83,5 +78,11 @@ public class User implements UserDetails {
 
     public Long getId() {
         return memberId;
+    }
+
+    public Member update(String username) {
+        this.username = username;
+
+        return this;
     }
 }

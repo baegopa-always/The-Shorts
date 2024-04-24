@@ -1,25 +1,41 @@
 package org.example.shortsaccount.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.shortsaccount.domain.User;
+import org.example.shortsaccount.domain.Member;
 import org.example.shortsaccount.dto.AddUserRequest;
 import org.example.shortsaccount.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public Long save(AddUserRequest dto) {
-        return userRepository.save(User.builder()
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return userRepository.save(Member.builder()
+                .username(dto.getUsername())
                 .email(dto.getEmail())
+                .password(encoder.encode(dto.getPassword()))
+                .role_id(dto.getRole_id())
                 .build()).getId();
     }
 
-    public User findById(Long userId) {
+    public Member findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
+    }
+
+    public Member findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Unexpected user - email"));
+    }
+
+    @Override
+    public Member loadUserByUsername(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException((email)));
     }
 }
