@@ -22,6 +22,10 @@
         <div class = "mb-2">
           <form th:action="@{/user}" method="POST">
             <div class="mb-3">
+              <label class="form-label text-white">Username</label>
+              <input type="text" class="form-control" name="username">
+            </div>
+            <div class="mb-3">
               <label class="form-label text-white">Email address</label>
               <input type="email" class="form-control" name="email">
             </div>
@@ -29,7 +33,10 @@
               <label class="form-label text-white">Password</label>
               <input type="password" class="form-control" name="password">
             </div>
-
+            <div class="text-white-50 mt-2 mb-5">
+              <input type="radio" name="role_id" value="1" checked="checked">사용자
+              <input type="radio" name="role_id" value="2">판매자
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </div>
