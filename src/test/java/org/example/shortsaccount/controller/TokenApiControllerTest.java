@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.shortsaccount.config.jwt.JwtFactory;
 import org.example.shortsaccount.config.jwt.JwtProperties;
 import org.example.shortsaccount.domain.RefreshToken;
-import org.example.shortsaccount.domain.User;
+import org.example.shortsaccount.domain.Member;
 import org.example.shortsaccount.dto.CreateAccessTokenRequest;
 import org.example.shortsaccount.repository.RefreshTokenRepository;
 import org.example.shortsaccount.repository.UserRepository;
@@ -62,20 +62,18 @@ class TokenApiControllerTest {
         // given
         final String url = "/api/token";
 
-        User testUser = userRepository.save(User.builder()
+        Member testMember = userRepository.save(Member.builder()
                 .username("abc")
                 .email("user@gmail.com")
                 .role_id(1)
-                .social_provider("google")
-                .social_id(1)
                 .build());
 
         String refreshToken = JwtFactory.builder()
-                .claims(Map.of("member_id", testUser.getMemberId()))
+                .claims(Map.of("member_id", testMember.getMemberId()))
                 .build()
                 .createToken(jwtProperties);
 
-        refreshTokenRepository.save(new RefreshToken(testUser.getMemberId(), refreshToken));
+        refreshTokenRepository.save(new RefreshToken(testMember.getMemberId(), refreshToken));
 
         CreateAccessTokenRequest request = new CreateAccessTokenRequest();
         request.setRefreshToken(refreshToken);

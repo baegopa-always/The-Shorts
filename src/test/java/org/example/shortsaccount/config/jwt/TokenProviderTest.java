@@ -1,7 +1,7 @@
 package org.example.shortsaccount.config.jwt;
 
 import io.jsonwebtoken.Jwts;
-import org.example.shortsaccount.domain.User;
+import org.example.shortsaccount.domain.Member;
 import org.example.shortsaccount.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,16 +32,14 @@ class TokenProviderTest {
     @Test
     void generateToken() {
         // given
-        User testUser = userRepository.save(User.builder()
+        Member testMember = userRepository.save(Member.builder()
                 .username("abc")
-                .email("user@gmail.com")
+                .email("kjk3323@gmail.com")
                 .role_id(1)
-                .social_provider("google")
-                .social_id(1)
                 .build());
 
         // when
-        String token = tokenProvider.generateToken(testUser, Duration.ofDays(14));
+        String token = tokenProvider.generateToken(testMember, Duration.ofDays(14));
 
         // then
         Long userId = Jwts.parser()
@@ -50,7 +48,7 @@ class TokenProviderTest {
                 .getBody()
                 .get("member_id", Long.class);
 
-        assertThat(userId).isEqualTo(testUser.getId());
+        assertThat(userId).isEqualTo(testMember.getId());
     }
 
     @DisplayName("validToken(): 만료된 토큰인 경우에 유효성 검증에 실패한다.")
