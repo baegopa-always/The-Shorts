@@ -2,7 +2,7 @@ package org.example.shortsaccount.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.shortsaccount.config.jwt.TokenProvider;
-import org.example.shortsaccount.domain.User;
+import org.example.shortsaccount.domain.Member;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -20,8 +20,8 @@ public class TokenService {
         }
 
         Long userId = refreshTokenService.findByRefreshToken(refreshToken).getMemberId();
-        User user = userService.findById(userId);
+        Member member = userService.findById(userId);
 
-        return tokenProvider.generateToken(user, Duration.ofHours(2));
+        return tokenProvider.generateToken(member, Duration.ofHours(2));
     }
 }
