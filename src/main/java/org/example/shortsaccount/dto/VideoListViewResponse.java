@@ -11,7 +11,7 @@ public class VideoListViewResponse {
     private final int memberId;
 
     public VideoListViewResponse(Video video) {
-        this.id = video.getId();
+        this.id = video.getVideoId();
         this.title = video.getTitle();
         this.length = video.getLength();
         this.memberId = video.getMemberId();
