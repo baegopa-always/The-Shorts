@@ -39,4 +39,20 @@ public class VideoService {
         video.update(request.getTitle(), request.getLength());
         return video;
     }
+
+    @Transactional
+    public Video checkVideo(long id) {
+        Video video = videoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+        video.checkVideo();
+        return video;
+    }
+
+    @Transactional
+    public Video addPlayTime(long id, int playTime) {
+        Video video = videoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+        video.addPlayTime(playTime);
+        return video;
+    }
 }
