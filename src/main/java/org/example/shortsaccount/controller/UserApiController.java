@@ -3,7 +3,7 @@ package org.example.shortsaccount.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.example.shortsaccount.dto.AddUserRequest;
+import org.example.shortsaccount.dto.UserDTO;
 import org.example.shortsaccount.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -17,7 +17,7 @@ public class UserApiController {
     private final UserService userService;
 
     @PostMapping("/user")
-    public String signup(AddUserRequest request) {
+    public String signup(UserDTO request) {
         userService.save(request);
         return "redirect:/login";
     }
