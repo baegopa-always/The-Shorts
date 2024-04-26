@@ -25,13 +25,9 @@ public class PlayHistory {
     @Column(name = "play_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime playDate;
 
-    @Column(name = "ad_views", nullable = false)
-    private int adViews;
-
     @Builder
-    public PlayHistory(int videoId, int adViews) {
+    public PlayHistory(int videoId) {
         this.videoId = videoId;
-        this.adViews = adViews;
         this.playDate = LocalDateTime.now();
     }
 }
