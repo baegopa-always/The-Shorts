@@ -2,7 +2,7 @@ package org.example.shortsaccount.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.shortsaccount.domain.Member;
-import org.example.shortsaccount.dto.AddUserRequest;
+import org.example.shortsaccount.dto.UserDTO;
 import org.example.shortsaccount.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
-    public Long save(AddUserRequest dto) {
+    public Long save(UserDTO dto) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return userRepository.save(Member.builder()
                 .username(dto.getUsername())
