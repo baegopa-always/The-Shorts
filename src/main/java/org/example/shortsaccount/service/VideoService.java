@@ -2,8 +2,7 @@ package org.example.shortsaccount.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.shortsaccount.domain.Video;
-import org.example.shortsaccount.dto.AddVideoRequest;
-import org.example.shortsaccount.dto.UpdateVideoRequest;
+import org.example.shortsaccount.dto.VideoDTO;
 import org.example.shortsaccount.repository.VideoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,7 @@ import java.util.List;
 public class VideoService {
     private final VideoRepository videoRepository;
 
-    public Video save(AddVideoRequest request) {
+    public Video save(VideoDTO request) {
         return videoRepository.save(request.toEntity());
     }
 
@@ -33,7 +32,7 @@ public class VideoService {
     }
 
     @Transactional
-    public Video update(long id, UpdateVideoRequest request) {
+    public Video update(long id, VideoDTO request) {
         Video video = videoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
         video.update(request.getTitle(), request.getLength());
@@ -49,10 +48,17 @@ public class VideoService {
     }
 
     @Transactional
-    public Video addPlayTime(long id, int playTime) {
+    public void addPlayTime(long id, int playTime) {
         Video video = videoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
         video.addPlayTime(playTime);
-        return video;
     }
+
+    @Transactional
+    public void addAdViews(long id, int playTime) {
+        Video video = videoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+        video.addAdViews(playTime);
+    }
+
 }
