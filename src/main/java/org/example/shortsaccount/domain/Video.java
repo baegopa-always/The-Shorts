@@ -22,6 +22,9 @@ public class Video {
     @Column(name = "member_id", nullable = false)
     private int memberId;
 
+    @Column(name = "ad_id", nullable = false)
+    private int adId;
+
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -37,14 +40,19 @@ public class Video {
     @Column(name = "video_views")
     private int videoViews;
 
+    @Column(name = "ad_views")
+    private int adViews;
+
     @Builder
-    public Video(int memberId, String title, int length) {
+    public Video(int memberId, String title, int length, int adId) {
         this.title = title;
         this.memberId = memberId;
+        this.adId = adId;
         this.length = length;
         this.uploadDate = LocalDateTime.now();
         this.playbackTime = 0;
         this.videoViews = 0;
+        this.adViews = 0;
     }
 
     public void update(String title, int length) {
@@ -54,10 +62,14 @@ public class Video {
     }
 
     public void checkVideo() {
-        this.videoViews = getVideoViews()+1;
+        this.videoViews = getVideoViews() + 1;
     }
 
     public void addPlayTime(int playTime) {
         this.playbackTime = getPlaybackTime() + playTime;
+    }
+
+    public void addAdViews(int playTime) {
+        this.adViews = getAdViews() + (playTime / 300);
     }
 }
