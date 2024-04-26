@@ -2,7 +2,7 @@ package org.example.shortsaccount.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.shortsaccount.domain.PlayHistory;
-import org.example.shortsaccount.dto.AddPlayHistoryRequest;
+import org.example.shortsaccount.dto.PlayHistoryDTO;
 import org.example.shortsaccount.repository.PlayHistoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 public class PlayHistoryService {
     private final PlayHistoryRepository playHistoryRepository;
 
-    public PlayHistory save(AddPlayHistoryRequest request) {
-        return playHistoryRepository.save(request.toEntity());
+    public PlayHistory save(PlayHistoryDTO request) {
+        return playHistoryRepository.save(PlayHistory.builder()
+                .videoId(request.getVideoId())
+                .build());
     }
 }
