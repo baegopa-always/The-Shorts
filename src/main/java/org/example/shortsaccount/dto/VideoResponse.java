@@ -14,6 +14,7 @@ public class VideoResponse {
     private final int memberId;
     private final int playbackTime;
     private final int videoViews;
+    private final int adViews;
 
     public VideoResponse(Video video) {
         this.videoId = video.getVideoId();
@@ -23,5 +24,6 @@ public class VideoResponse {
         this.memberId = video.getMemberId();
         this.playbackTime = video.getPlaybackTime();
         this.videoViews = video.getVideoViews();
+        this.adViews = video.getAdViews();
     }
 }
