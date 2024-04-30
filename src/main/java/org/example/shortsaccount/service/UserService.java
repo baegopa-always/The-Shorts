@@ -19,7 +19,7 @@ public class UserService implements UserDetailsService {
                 .username(dto.getUsername())
                 .email(dto.getEmail())
                 .password(encoder.encode(dto.getPassword()))
-                .role_id(dto.getRole_id())
+                .role(dto.getRole())
                 .build()).getId();
     }
 
