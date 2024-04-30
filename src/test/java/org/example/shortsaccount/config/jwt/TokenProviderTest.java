@@ -35,7 +35,7 @@ class TokenProviderTest {
         Member testMember = userRepository.save(Member.builder()
                 .username("abc")
                 .email("kjk3323@gmail.com")
-                .role_id(1)
+                .role("USER")
                 .build());
 
         // when
