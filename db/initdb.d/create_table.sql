@@ -1,116 +1,106 @@
-create table ad_type
+create table advertisement
 (
-    type_id    int auto_increment
+    ad_id bigint unsigned not null
         primary key,
-    type_title varchar(10) not null
-);
-
-create table role
-(
-    role_id   int auto_increment
-        primary key,
-    role_type varchar(6) not null
+    title varchar(20)     not null
 );
 
 create table member
 (
-    member_id       int auto_increment
+    member_id bigint unsigned auto_increment
         primary key,
-    username        varchar(10) not null,
-    email           varchar(30) not null,
-    role_id         int         not null,
-    social_provider varchar(10) not null,
-    social_id       int         not null,
-    password        varchar(45) null,
+    username  varchar(10)  not null,
+    email     varchar(200) not null,
+    password  varchar(300) null,
+    role      varchar(6)   not null,
     constraint email_UNIQUE
-        unique (email),
-    constraint role_type
-        foreign key (role_id) references role (role_id)
+        unique (email)
 );
 
-create index role_type_idx
-    on member (role_id);
-
-create table sales
+create table refresh_token
 (
-    sales_id     int auto_increment
+    token_id      int auto_increment
         primary key,
-    user_id      int                                 not null,
-    sales_amount int                                 not null,
-    sales_date   timestamp default CURRENT_TIMESTAMP not null,
-    constraint sales_user_id
-        foreign key (user_id) references member (member_id)
+    member_id     int          not null,
+    refresh_token varchar(300) not null
 );
-
-create index sales_user_id_idx
-    on sales (user_id);
 
 create table video
 (
-    video_id    int auto_increment
+    video_id       bigint unsigned auto_increment
         primary key,
-    member_id   int                                 not null,
-    title       varchar(30)                         not null,
-    upload_date timestamp default CURRENT_TIMESTAMP not null,
-    length      int                                 not null,
-    constraint user_video
+    member_id      bigint unsigned                           not null,
+    title          varchar(30)                               not null,
+    upload_date    timestamp       default CURRENT_TIMESTAMP not null,
+    length         bigint unsigned                           not null,
+    total_playtime bigint unsigned default '0'               not null,
+    video_views    bigint unsigned default '0'               not null,
+    constraint video_owner
         foreign key (member_id) references member (member_id)
 );
 
-create table ad
+create table play_history
 (
-    ad_id    int auto_increment
+    play_id         bigint auto_increment
         primary key,
-    video_id int not null,
-    type_id  int not null,
-    constraint ad_type
-        foreign key (type_id) references ad_type (type_id),
-    constraint video_ad
+    user_id         bigint unsigned                           not null,
+    video_id        bigint unsigned                           not null,
+    last_watch_time bigint unsigned default '0'               not null,
+    play_date       timestamp       default CURRENT_TIMESTAMP not null,
+    constraint user_id_key
+        foreign key (user_id) references member (member_id),
+    constraint video_id_key
         foreign key (video_id) references video (video_id)
 );
 
-create index ad_type_idx
-    on ad (type_id);
+create index user_id_key_idx
+    on play_history (user_id);
 
-create index video_ad_idx
-    on ad (video_id);
+create index video_id_key_idx
+    on play_history (video_id);
 
-create table playback_history
+create table sales
 (
-    playback_id int auto_increment
+    sales_id       bigint auto_increment
         primary key,
-    video_id    int                                 not null,
-    user_id     int                                 not null,
-    playtime    int                                 not null,
-    play_date   timestamp default CURRENT_TIMESTAMP not null,
-    constraint played_video
-        foreign key (video_id) references video (video_id),
-    constraint video_player
-        foreign key (user_id) references member (member_id)
+    video_id       bigint unsigned                           not null,
+    sales_amount   bigint unsigned                           not null,
+    sales_date     timestamp       default CURRENT_TIMESTAMP not null,
+    daily_views    bigint unsigned default '0'               not null,
+    daily_ad_views bigint unsigned default '0'               not null,
+    daily_playtime bigint unsigned default '0'               not null,
+    user_id        bigint unsigned                           not null,
+    constraint userId_sales
+        foreign key (user_id) references member (member_id),
+    constraint video_sales
+        foreign key (video_id) references play_history (video_id)
 );
 
-create index played_video_idx
-    on playback_history (video_id);
+create index userId_sales_idx
+    on sales (user_id);
 
-create index video_player_idx
-    on playback_history (user_id);
+create index video_sales_idx
+    on sales (video_id);
 
-create table statistics
-(
-    stats_id      int auto_increment
-        primary key,
-    video_id      int                                 not null,
-    video_views   int                                 not null,
-    playback_time int                                 not null,
-    stats_date    timestamp default CURRENT_TIMESTAMP not null,
-    ad_views      int                                 not null,
-    constraint check_video_id
-        foreign key (video_id) references video (video_id)
-);
-
-create index check_video_id_idx
-    on statistics (video_id);
-
-create index user_video_idx
+create index user_video_key_idx
     on video (member_id);
+
+create table video_advertisement
+(
+    played_ad_id bigint unsigned auto_increment
+        primary key,
+    video_id     bigint unsigned                     not null,
+    ad_id        bigint unsigned                     not null,
+    ad_timestamp timestamp default CURRENT_TIMESTAMP not null,
+    constraint video_ad_id
+        foreign key (ad_id) references advertisement (ad_id),
+    constraint video_ad_key
+        foreign key (video_id) references video (video_id)
+);
+
+create index video_ad_id_idx
+    on video_advertisement (ad_id);
+
+create index video_ad_key_idx
+    on video_advertisement (video_id);
 
