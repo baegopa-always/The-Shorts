@@ -5,7 +5,7 @@ import org.example.shortsaccount.domain.Video;
 
 @Getter
 public class VideoListViewResponse {
-    private final Long id;
+    private final int id;
     private final String title;
     private final int length;
     private final int memberId;

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class VideoViewResponse {
-    private Long id;
+    private int id;
     private String title;
     private int length;
     private LocalDateTime uploadDate;
