@@ -12,9 +12,8 @@ public class VideoResponse {
     private final int length;
     private final LocalDateTime uploadDate;
     private final int memberId;
-    private final int playbackTime;
+    private final int totalPlaytime;
     private final int videoViews;
-    private final int adViews;
 
     public VideoResponse(Video video) {
         this.videoId = video.getVideoId();
@@ -22,8 +21,7 @@ public class VideoResponse {
         this.length = video.getLength();
         this.uploadDate = video.getUploadDate();
         this.memberId = video.getMemberId();
-        this.playbackTime = video.getPlaybackTime();
+        this.totalPlaytime = video.getTotalPlaytime();
         this.videoViews = video.getVideoViews();
-        this.adViews = video.getAdViews();
     }
 }
