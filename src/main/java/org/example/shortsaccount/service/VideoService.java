@@ -54,11 +54,5 @@ public class VideoService {
         video.addPlayTime(playTime);
     }
 
-    @Transactional
-    public void addAdViews(long id, int playTime) {
-        Video video = videoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
-        video.addAdViews(playTime);
-    }
 
 }
