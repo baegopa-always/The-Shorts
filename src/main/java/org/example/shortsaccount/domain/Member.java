@@ -27,17 +27,17 @@ public class Member implements UserDetails {
     @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "role_id", nullable = false)
-    private int role_id;
+    @Column(name = "role", nullable = false)
+    private String role;
 
     @Column(name = "password")
     private String password;
 
     @Builder
-    public Member(String email, String username, int role_id, String auth, String password) {
+    public Member(String email, String username, String role, String auth, String password) {
         this.email = email;
         this.username = username;
-        this.role_id = role_id;
+        this.role = role;
         this.password = password;
     }
 
@@ -83,7 +83,6 @@ public class Member implements UserDetails {
 
     public Member update(String username) {
         this.username = username;
-
         return this;
     }
 }
