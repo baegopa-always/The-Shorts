@@ -2,7 +2,6 @@ package org.example.shortsaccount.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.shortsaccount.domain.PlayHistory;
 
 @Getter
 @Setter
