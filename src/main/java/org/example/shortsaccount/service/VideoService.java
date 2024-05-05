@@ -54,5 +54,10 @@ public class VideoService {
         video.addPlayTime(playTime);
     }
 
+    public int getLength(long id) {
+        Video video = videoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+        return video.getLength();
+    }
 
 }
