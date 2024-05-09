@@ -37,9 +37,13 @@ public class VideoApiController {
         // body 에서 user 정보 가져와서 사용자 재생 기록 확인
         PlayHistory playHistory;
         try {
-            playHistory = playHistoryService.findVideoHistoryByUserId(request.getMemberId(), id);
+            playHistory = playHistoryService.findFirstByUserIdAndVideoIdOrderByPlayDateDesc(request.getMemberId(), id);
+            // 가장 최근 재생 기록에서 비디오 크기만큼 봤을 경우 0으로 생성해서 반환
+            if (playHistory.getLastWatchTime() >= videoService.getLength(id)) {
+                playHistory = playHistoryService.save(request, videoService.getLength(id));
+            }
         } catch (IllegalArgumentException e) {
-            playHistory = playHistoryService.save(request);
+            playHistory = playHistoryService.save(request, videoService.getLength(id));
             // 0으로 보내주자
         }
         // 재생 시점 있을 경우 불러와서 재생
@@ -52,10 +56,15 @@ public class VideoApiController {
         // play history 생성
         request.setVideoId(id);
         // 해당 video id에서 재생시간만큼 playback time 증가, ad_views 증가
+        int maxSize = videoService.getLength(id);
+        if (request.getPlayTime() > maxSize) {
+            request.setPlayTime(maxSize);
+        }
+
         videoService.addPlayTime(request.getVideoId(), request.getPlayTime());
         videoAdvertisementService.checkVideoAdvertisement(id, request.getPlayTime());
         // 사용자 기록 업데이트
-        PlayHistory playHistory = playHistoryService.updateLastWatchTime(request);
+        PlayHistory playHistory = playHistoryService.updateLastWatchTime(request); // 여기가 업데이트 였음
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(playHistory);
     }
