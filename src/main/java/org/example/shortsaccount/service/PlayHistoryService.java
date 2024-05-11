@@ -47,9 +47,4 @@ public class PlayHistoryService {
         return playHistoryRepository.findFirstByUserIdAndVideoIdOrderByPlayDateDesc(userId, videoId)
                 .orElseThrow(() -> new IllegalArgumentException("not found user: " + userId + " video: "+ videoId));
     }
-
-    public List<PlayHistory> getVideoHistory(int videoId) {
-        // 왜 만들어놓은걸까 ?
-        return null;
-    }
 }
