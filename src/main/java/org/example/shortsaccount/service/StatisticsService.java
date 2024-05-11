@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.shortsaccount.domain.PlayHistory;
 import org.example.shortsaccount.domain.Statistics;
 import org.example.shortsaccount.domain.Video;
-import org.example.shortsaccount.domain.VideoAdvertisement;
 import org.example.shortsaccount.dto.StatsDTO;
 import org.example.shortsaccount.dto.TopFiveVideoDTO;
 import org.example.shortsaccount.dto.TopFiveVideoInterface;
@@ -28,17 +27,6 @@ public class StatisticsService {
     private final VideoRepository videoRepository;
     private final VideoAdvertisementRepository videoAdvertisementRepository;
 
-    // 일일 조회수
-    // select count (*) from
-    // play history 에서 video_id & 날짜로 묶은 다음에
-    // last_watch_time 합치면 일일 영상 재생 시간
-    // 여기서 count 하면 일일 조회수
-
-    // 일일 광고 조회수
-    // video_ad 에서 video_id & 날짜로 묶고
-    // count
-
-    // 위에 애들 모아서 amount 만들기
     public List<TopFiveVideoDTO> findDailyTop5Views() {
         List<Statistics> dailyTop5Views = statisticsRepository.findDailyTop5Views(LocalDate.now().minusDays(1));
         return topVideos(dailyTop5Views);
@@ -48,29 +36,31 @@ public class StatisticsService {
         List<Statistics> dailyTop5Playtime = statisticsRepository.findDailyTop5Playtime(LocalDate.now().minusDays(1));
         return topVideos(dailyTop5Playtime);
     }
+
     public List<TopFiveVideoDTO> topVideos(List<Statistics> dailyTop5) {
         List<TopFiveVideoDTO> topVideos = new ArrayList<>();
         for (Statistics stat : dailyTop5) {
-            TopFiveVideoDTO video = new TopFiveVideoDTO();
-            video.setVideoId(stat.getVideoId());
-            video.setViews(stat.getDailyViews());
-            video.setPlaytime(stat.getDailyPlaytime());
-            topVideos.add(video);
+            topVideos.add(TopFiveVideoDTO.builder()
+                    .videoId(stat.getVideoId())
+                    .views(stat.getDailyViews())
+                    .playtime(stat.getDailyPlaytime())
+                    .build());
         }
         return topVideos;
     }
 
-    //////////////////////////////////////////////////
     public List<TopFiveVideoInterface> findWeeklyTop5Views() {
-        // 주간 뷰의 합산으로 해야..
         return statisticsRepository.findTop5ViewsBetween(LocalDate.now().minusWeeks(1),LocalDate.now());
     }
+
     public List<TopFiveVideoInterface> findWeeklyTop5Playtime() {
         return statisticsRepository.findTop5PlaytimeBetween(LocalDate.now().minusWeeks(1),LocalDate.now());
     }
+
     public List<TopFiveVideoInterface> findMonthlyTop5Views() {
         return statisticsRepository.findTop5ViewsBetween(LocalDate.now().minusMonths(1),LocalDate.now());
     }
+
     public List<TopFiveVideoInterface> findMonthlyTop5Playtime() {
         return statisticsRepository.findTop5PlaytimeBetween(LocalDate.now().minusMonths(1),LocalDate.now());
     }
@@ -79,67 +69,57 @@ public class StatisticsService {
         return statisticsRepository.findAllByVideoId(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found video: " + id));
     }
+
     public StatsDTO createStatsInfo(Statistics statistics) {
-        StatsDTO stats = new StatsDTO();
-        stats.setVideoId(statistics.getVideoId());
-        stats.setStatsAmount(statistics.getStatsAmount());
-        stats.setDailyViewAmount(getViewsAmount(statistics.getDailyViews()));
-        stats.setDailyAdAmount(getAdAmount(statistics.getDailyAdViews()));
-        stats.setStatsDate(statistics.getStatsDate());
-        return stats;
+        return StatsDTO.builder()
+                .videoId(statistics.getVideoId())
+                .statsAmount(statistics.getStatsAmount())
+                .dailyViewAmount(getViewsAmount(statistics.getDailyViews()))
+                .dailyAdAmount(getAdAmount(statistics.getDailyAdViews()))
+                .statsDate(statistics.getStatsDate())
+                .build();
     }
 
-
     @Transactional
-    public List<Statistics> createStatistics() {
-        // 1. 영상 엔티티로 전부 가져오기
+    public void createAllStatistics() {
         List<Video> videos = videoRepository.findAll();
-        // # 날짜 수정 필요
-        // 매일 전날 영상들 통계 처리 하도록,,
-        // # 성능 개선
-        // 1. 통계 처리 끝난 play_history 제거 해야함 -> 재생 시간이 비디오 영상 길이랑 같으면 삭제하는 스케줄링..
-        // 2. 인덱싱 활용 ??
-        LocalDateTime to = LocalDateTime.now();
-        LocalDateTime from = to.minusDays(1);
-        LocalDate statsDate = LocalDate.now().minusDays(1);
+        LocalDate now = LocalDate.now();
         for (Video video : videos) {
-            List<PlayHistory> videoHistory;
-            // 2. 각 영상 id에 해당하는 모든 재생 기록 엔티티로 가져오기
-            // 없으면 continue
-            try {
-            videoHistory = playHistoryRepository.findAllByVideoIdAndPlayDateBetween(
-                    video.getVideoId(),
-                    from,
-                    to)
-                    .orElseThrow(() -> new IllegalArgumentException("not found video: "));
-            } catch (IllegalArgumentException e) {
-                continue;
-            }
-            // 3. 일간 전체 재생 시간
-            int dailyPlaytime = getDailyPlaytime(videoHistory);
-            // 4. 일일 조회 수
-            int dailyViews = videoHistory.size();
-            List<VideoAdvertisement> videoAds = videoAdvertisementRepository.findAllByVideoIdAndAdTimestampBetween(
-                    video.getVideoId(),
-                    from,
-                    to)
-                    .orElseThrow(() -> new IllegalArgumentException("not found video: "));
-            // 5. 일일 광고 조회 수
-            int dailyAdViews = videoAds.size();
-            // 6. 조회수, 광고 조회수로 일간 정산
-            int amount = getAmount(dailyViews, dailyAdViews);
-            // 7. 영상 id에 대하여 날짜 설정하고 통계 정산 저장
-            statisticsRepository.save(Statistics.builder()
-                    .videoId(video.getVideoId())
-                    .statsAmount(amount)
-                    .dailyViews(dailyViews)
-                    .dailyAdViews(dailyAdViews)
-                    .dailyPlaytime(dailyPlaytime)
-                    .statsDate(statsDate)
-                    .userId(video.getMemberId())
-                    .build());
+            createStats(video, now.atStartOfDay().minusDays(1), now.atStartOfDay(), now);
         }
-        return statisticsRepository.findAll();
+    }
+
+    private void createStats(Video video, LocalDateTime from, LocalDateTime to, LocalDate now) {
+        try {
+            List<PlayHistory> videoHistory = playHistoryRepository.findAllByVideoIdAndPlayDateBetween(
+                            video.getVideoId(),
+                            from,
+                            to)
+                    .orElseThrow(() -> new IllegalArgumentException("not found video: "));
+            save(video,
+                videoHistory.size(),
+                videoAdvertisementRepository.findAllByVideoIdAndAdTimestampBetween(
+                                video.getVideoId(),
+                                from,
+                                to)
+                        .orElseThrow(() -> new IllegalArgumentException("not found video: ")).size(),
+                getDailyPlaytime(videoHistory),
+                now);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+    }
+
+    private void save(Video video, int dailyViews, int dailyAdViews, int dailyPlaytime, LocalDate statsDate) {
+        statisticsRepository.save(Statistics.builder()
+                .videoId(video.getVideoId())
+                .statsAmount(getAmount(dailyViews, dailyAdViews))
+                .dailyViews(dailyViews)
+                .dailyAdViews(dailyAdViews)
+                .dailyPlaytime(dailyPlaytime)
+                .statsDate(statsDate)
+                .userId(video.getMemberId())
+                .build());
     }
 
     private int getDailyPlaytime(List<PlayHistory> videoHistory) {
