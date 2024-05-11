@@ -19,17 +19,22 @@ public class VideoAdvertisementService {
 
     @Transactional
     public void checkVideoAdvertisement(int videoId, int playtime) {
-        Video video = videoRepository.findById((long) videoId)
-                .orElseThrow(() -> new IllegalArgumentException("not found: " + videoId));
-        RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator();
-        int count = playtime / 300;
-        for (int i = 0; i < count; i++) {
-            int maxSize = advertisementRepository.countAllBy();
-            videoAdvertisementRepository.save(VideoAdvertisement.builder()
-                    .videoId(videoId)
-                    .adId(randomNumberGenerator.randomNumberGenerator(maxSize))
-                    .build());
+        try {
+            videoRepository.findById((long) videoId)
+                    .orElseThrow(() -> new IllegalArgumentException("not found: " + videoId));
+            RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator();
+            int count = playtime / 300;
+            for (int i = 0; i < count; i++) {
+                int maxSize = advertisementRepository.countAllBy();
+                videoAdvertisementRepository.save(VideoAdvertisement.builder()
+                        .videoId(videoId)
+                        .adId(randomNumberGenerator.randomNumberGenerator(maxSize))
+                        .build());
+            }
+        } catch (IllegalArgumentException e) {
+            return;
         }
+
     }
 
 }
