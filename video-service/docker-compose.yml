@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.3.0
+    container_name: mysql-container
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/initdb.d:/docker-entry-point-initdb.d
+    environment:
+      - MYSQL_DATABASE=shortsAccount
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=password
+      - TZ=Asia/Seoul
+      - MYSQL_USER=admin

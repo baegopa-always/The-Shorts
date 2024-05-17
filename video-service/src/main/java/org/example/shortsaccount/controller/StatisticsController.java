@@ -5,10 +5,7 @@ import org.example.shortsaccount.domain.Statistics;
 import org.example.shortsaccount.dto.StatsDTO;
 import org.example.shortsaccount.dto.TopFiveVideoDTO;
 import org.example.shortsaccount.dto.TopFiveVideoInterface;
-import org.example.shortsaccount.service.PlayHistoryService;
 import org.example.shortsaccount.service.StatisticsService;
-import org.example.shortsaccount.service.VideoAdvertisementService;
-import org.example.shortsaccount.service.VideoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,27 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class StatisticsController {
-    private final VideoService videoService;
-    private final PlayHistoryService playHistoryService;
-    private final VideoAdvertisementService videoAdvertisementService;
     private final StatisticsService statisticsService;
-
-    @PostMapping("/api/statistics")
-    public ResponseEntity<List<Statistics>> createAllStatistics() {
-        // 모든 비디오 id list로 가져오기 -> 반복문 돌면서
-        // 일일 조회수
-        // select count (*) from
-        // play history 에서 video_id & 날짜로 묶은 다음에
-        // last_watch_time 합치면 일일 영상 재생 시간
-        // 여기서 count 하면 일일 조회수
-
-        // 일일 광고 조회수
-        // video_ad 에서 video_id & 날짜로 묶고
-        // count
-
-        // 위에 애들 모아서 amount 만들기
-        List<Statistics> allStatistics = statisticsService.createStatistics();
-        return ResponseEntity.ok().body(allStatistics);
+    /*
+    1. MSA -> USER, VIDEO, STATS
+    2. 일간, 주간, 월간 테이블 추가 (성능 개선)
+    3. 컨트롤러 코드 줄이고 서비스 쪽 리팩토링 함수화해서 20라인 이내 v
+    4. 하드코딩 값 상수 & enum 처리
+    */
+    @PostMapping("/api/stats/force")
+    public void createStatsForce() {
+        statisticsService.createAllStatistics();
     }
 
     @GetMapping("/api/stats/{id}")
@@ -55,7 +41,6 @@ public class StatisticsController {
 
     @GetMapping("/api/daily/views")
     public ResponseEntity<List<TopFiveVideoDTO>> getDailyTopFiveViews() {
-        // 1. statistics에서 오늘 날짜 기준만 고르고, daily view 기준 top5 ..
         List<TopFiveVideoDTO> dailyTopViews = statisticsService.findDailyTop5Views();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(dailyTopViews);
