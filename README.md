@@ -68,7 +68,7 @@
 ---
 ### API 명세
 
-Video API
+- Video API
 
 |           URL           | Method |Description| TEST |
 |:-----------------------:|:------:|:----:|:----:|
@@ -80,7 +80,7 @@ Video API
 |    /api/videos/{id}     | DELETE |해당 영상 삭제|  ✅   |
 |    /api/videos/{id}     |  PUT   |해당 영상 수정|  ✅   |
 
-User API
+- User API
 
 |           URL           | Method |             Description             | TEST |
 |:-----------------------:|:------:|:-----------------------------------:|:---:|
@@ -89,7 +89,7 @@ User API
 |          /user          |  POST  |              사용자 회원가입               |  ✅  |
 |         /logout         |  GET   |              사용자 로그아웃               |     |
 
-Statistics API
+- Statistics API
 
 |                         URL                          | Method |Description| TEST |
 |:----------------------------------------------------:|:------:|:---------:|:----:|
@@ -111,7 +111,7 @@ Statistics API
   - 통계 및 정산 데이터 생성
 - #### OAuth2
   - 구글 소셜 회원가입 및 로그인
-- #### Token
+- #### JWT Token
   - 로그인 상태 유지를 위한 토큰 발급
 
 ---
