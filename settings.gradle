@@ -1,1 +1,3 @@
 rootProject.name = 'shorts-account'
+include 'video-service'
+include 'batch-service'
