@@ -2,7 +2,9 @@
 
 ### 프로젝트 개요
 
-<center><img src="./static/project_logo.png" height=500></center>
+<p align="center">
+  <img src="./static/project_logo.png" height=500>
+</p>
 
 #### 영상 스트리밍 서비스 정산 시스템
 
@@ -58,10 +60,10 @@
 ### 프로젝트 구성
 개발 기간 : <n>2024. 04. 20 - 2024. 05. xx</n>
 
-|                         최동주                         |
-|:---------------------------------------------------:|
-|                         BE                          |
-| [baegopa-always](https://github.com/baegopa-always) |
+|                         최동주                          |
+|:----------------------------------------------------:|
+|                          BE                          |
+| [@baegopa-always](https://github.com/baegopa-always) |
 
 ---
 ### API 명세
@@ -125,7 +127,7 @@ Statistics API
 - Docker / Docker Compose
 
 ---
-### 트러블 슈팅
+### 트러블 슈팅 (작성 중)
 1. 영상 누적 조회수와 재생 기록 수의 합산이 다른 문제
 
 2. 영상 삭제 시 삭제한 영상 재생 기록이 남는 문제
@@ -139,7 +141,7 @@ Statistics API
 ---
 ### ERD 다이어그램
 
-<center><img src="./static/ERD_diagram.png" height=600></center>
+<p align="center"><img src="./static/ERD_diagram.png" height=600></p>
 
 ---
 ### 참고 문서
