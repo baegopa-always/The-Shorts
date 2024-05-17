@@ -1,4 +1,5 @@
 # The Shorts
+
 ### 프로젝트 개요
 
 <center><img src="./static/project_logo.png" height=500></center>
